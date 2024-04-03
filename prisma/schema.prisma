@@ -1,0 +1,60 @@
+// Prisma Setup
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String 
+  description String?
+  course String
+  verified Boolean @default(false)
+  password String
+  role String
+  createdAt DateTime @default(now())
+  imageUrl String?
+  BannerUrl String?
+  blogs Blog[]
+  token Token?
+}
+
+model Token {
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  token String @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime 
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id Int @id @default(autoincrement())
+  authorId Int @unique
+  createdAt DateTime @default(now())
+  editedAt DateTime?
+  author User @relation(fields: [authorId], references: [id])
+  categories Category[]
+  content Blog_Content[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  blogs Blog[]
+}
+
+model Blog_Content {
+  id Int @id @default(autoincrement())
+  blogId Int
+  title String
+  imageUrl String?
+  content String
+  blog Blog @relation(fields: [blogId], references: [id])
+}
