@@ -26,16 +26,14 @@ app.get("/", (req, res) => {
 })
 
 app.use( ( error, req, res, next ) => {
-	const isDevelopment = req.app.get('env') === 'development';
-    res.locals.message = error.message;
-    res.locals.error = isDevelopment ? error : {};
+	const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
 
-    console.error(error); 
-    const status = error.status || 500;
-    res.status(status);
-
-    const errorInfo = isDevelopment ? { message: error.message, status } : {};
-    return res.send('internal server error')
+    return res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+    });
 });
 
 app.listen(3000, () => {

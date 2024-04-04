@@ -71,16 +71,10 @@ export const validateCode = async (req, res, next) => {
         });
         //validations
         if (!dbToken || new Date() > dbToken.expiresAt) { // expired
-            return res.status(401).send(`
-                <h1>Email Verification</h1>
-                <p>Token Expirado.</p>
-            `);
+            return res.sendStatus(401)
         }
         if (dbToken.userId !== Number(userId)) { // not your token
-            return res.status(401).send(`
-                <h1>Email Verification</h1>
-                <p>Token Inválido.</p>
-            `);
+            return res.sendStatus(401)
         } 
 
         const updatedUser = await prisma.user.update({ // update its status
@@ -89,18 +83,12 @@ export const validateCode = async (req, res, next) => {
         });
 
         await prisma.token.delete({ // token now cannot be used anymore
-            where: { token: token },
+            where: { token: dbToken.token },
         });
 
-        res.status(200).send(`
-            <h1>Email Verification</h1>
-            <p>Email verificado com sucesso!.</p>
-        `)
+        return res.sendStatus(200)
     } catch (e) {
         console.log(e)
-        res.status(500).send(`
-            <h1>Email Verification</h1>
-            <p>There was an error verifying your email. Please try again later.</p>
-        `);
+        return res.sendStatus(500)
     }
 }
