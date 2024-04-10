@@ -2,12 +2,14 @@ import express from "express";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 
 const app = express();
 
 dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan('dev'));
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -18,8 +20,8 @@ app.use(cors({
 import userRoute from './src/routes/user.route.js';
 import authRoute from './src/routes/auth.route.js';
 //rotas
-app.use('/profile', userRoute);
-app.use('/auth', authRoute);
+app.use('/api/profile', userRoute);
+app.use('/api/auth', authRoute);
 
 app.get("/", (req, res) => {
     res.send("Hello World");
