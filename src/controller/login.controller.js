@@ -14,21 +14,20 @@ export const login = async(req, res, next) => {
         }
     })
     if(!User){
-        res.send(400).json('Usuário não encontrado')
+        return res.status(403).json('Usuário não encontrado')
     }
     try{
         if (await bcrypt.compare(user.password, User.password)){ //validation
             const token = jwt.sign({id: User.id}, process.env.JWT_SECRET); // token creation
             
-            const { password: password, ...validUser} = User // userprops
+            const { password, ...validUser} = User // userprops
 
             if(!validUser.verified){
                 let token = await prisma.token.findUnique({
                     where: {userId : validUser.id}
                 })
                 if(!token){
-                    let expiryDate = new Date();
-                    expiryDate.setHours(expiryDate.getHours() + 1);
+                    let expiryDate = new Date(Date.now() + 3600000);
                     const dbToken = await prisma.token.create({ // create token
                         data: {
                             userId: validUser.id,

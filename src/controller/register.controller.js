@@ -35,13 +35,7 @@ export const register = async (req, res, next) => {
             }
         })
 
-        const expiryDate = new Date();
-        /*const lastToken = prisma.token.findUnique({ //future addition, define a limit of time between requests
-            where: {userId: newUser.id} 
-        })
-        console.log(lastToken)*/
-
-        expiryDate.setHours(expiryDate.getHours() + 1);
+        let expiryDate = new Date(Date.now() + 3600000);
         const dbToken = await prisma.token.create({ // create token
             data: {
                 userId: newUser.id,
@@ -71,6 +65,9 @@ export const validateCode = async (req, res, next) => {
         });
         //validations
         if (!dbToken || new Date() > dbToken.expiresAt) { // expired
+            await prisma.token.delete({ // token now can be resent
+                where: { token: dbToken.token },
+            });
             return res.sendStatus(401)
         }
         if (dbToken.userId !== Number(userId)) { // not your token
