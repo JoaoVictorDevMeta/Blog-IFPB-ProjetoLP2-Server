@@ -15,6 +15,9 @@ router.get('/', (req, res) => {
 
 router.get('/:id/verify/:token', findUserById, validateCode)
 router.get('/verify/:userId', verifyToken, checkUserlogged)
+router.get('/validate-token', verifyToken, (req, res) => {
+    return res.status(200).json('token válido')
+})
 
 router.post('/logout', logout)
 router.post('/sign-in', checkUserAuth, register)

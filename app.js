@@ -20,7 +20,7 @@ app.use(cors({
 import userRoute from './src/routes/user.route.js';
 import authRoute from './src/routes/auth.route.js';
 //rotas
-app.use('/api/profile', userRoute);
+app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 
 app.get("/", (req, res) => {

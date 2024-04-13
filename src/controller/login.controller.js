@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
-import { PrismaClient } from "@prisma/client";
 import crypto from 'crypto';
 import { sendMail } from '../utils/sendEmail.js';
 
-const prisma = new PrismaClient();
+import { db } from "../lib/db.js";
 
 export const login = async(req, res, next) => {
     let user = req.body
-    const User = await prisma.user.findUnique({
+    const User = await db.user.findUnique({
         where: {
             email: user.email
         }
@@ -23,12 +22,12 @@ export const login = async(req, res, next) => {
             const { password, ...validUser} = User // userprops
 
             if(!validUser.verified){
-                let token = await prisma.token.findUnique({
+                let token = await db.token.findUnique({
                     where: {userId : validUser.id}
                 })
                 if(!token){
                     let expiryDate = new Date(Date.now() + 3600000);
-                    const dbToken = await prisma.token.create({ // create token
+                    const dbToken = await db.token.create({ // create token
                         data: {
                             userId: validUser.id,
                             token: crypto.randomBytes(32).toString('hex'),

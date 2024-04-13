@@ -1,14 +1,13 @@
 import bcrypt from 'bcrypt';
 import { sendMail } from "../utils/sendEmail.js";
-import { PrismaClient } from "@prisma/client";
 import crypto from 'crypto'
 
-const prisma = new PrismaClient();
+import { db } from "../lib/db.js";
 
 export const register = async (req, res, next) => {
     const User = req.body
     try{
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
             where: {
                 email: User.email
             }
@@ -25,7 +24,7 @@ export const register = async (req, res, next) => {
     let role = 'aluno';
 
     try{
-        const newUser = await prisma.user.create({
+        const newUser = await db.user.create({
             data: {
                 email: User.email,
                 name: User.nome,
@@ -36,7 +35,7 @@ export const register = async (req, res, next) => {
         })
 
         let expiryDate = new Date(Date.now() + 3600000);
-        const dbToken = await prisma.token.create({ // create token
+        const dbToken = await db.token.create({ // create token
             data: {
                 userId: newUser.id,
                 token: crypto.randomBytes(32).toString('hex'),
@@ -60,12 +59,12 @@ export const validateCode = async (req, res, next) => {
     const userId = req.params.id;
 
     try {
-        const dbToken = await prisma.token.findUnique({
+        const dbToken = await db.token.findUnique({
             where: { token: token },
         });
         //validations
         if (!dbToken || new Date() > dbToken.expiresAt) { // expired
-            await prisma.token.delete({ // token now can be resent
+            await db.token.delete({ // token now can be resent
                 where: { token: dbToken.token },
             });
             return res.sendStatus(401)
@@ -74,12 +73,12 @@ export const validateCode = async (req, res, next) => {
             return res.sendStatus(401)
         } 
 
-        const updatedUser = await prisma.user.update({ // update its status
+        const updatedUser = await db.user.update({ // update its status
             where: { id: Number(userId) },
             data: { verified: true },
         });
 
-        await prisma.token.delete({ // token now cannot be used anymore
+        await db.token.delete({ // token now cannot be used anymore
             where: { token: dbToken.token },
         });
 
