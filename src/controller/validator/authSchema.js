@@ -13,7 +13,7 @@ const Cursos = [
 
 export const authLoginSchema = joi.object({
     email: joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .email({ minDomainSegments: 2 })
         .required(),
 
     password: joi.string()

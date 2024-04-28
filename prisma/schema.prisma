@@ -23,10 +23,11 @@ model User {
 
   blogs Blog[]
   notifications Notification[]
+  likes like[]
   token Token?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime?
+  updatedAt DateTime @updatedAt
 }
 
 model Notification{
@@ -50,11 +51,22 @@ model Token {
 model Blog {
   id Int @id @default(autoincrement())
   authorId Int @unique
+  title String
+  subTitle String 
   createdAt DateTime @default(now())
-  editedAt DateTime?
+  editedAt DateTime @updatedAt
   author User @relation(fields: [authorId], references: [id])
   categories Category[]
   content Blog_Content[]
+  likes like[]
+}
+
+model like {
+  id Int @id @default(autoincrement())
+  userId Int 
+  blogId Int
+  user User @relation(fields: [userId], references: [id])
+  blog Blog @relation(fields: [blogId], references: [id])
 }
 
 model Category {
@@ -68,6 +80,7 @@ model Blog_Content {
   blogId Int
   title String
   imageUrl String?
+  imageRef String?
   content String
   blog Blog @relation(fields: [blogId], references: [id])
 }

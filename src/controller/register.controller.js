@@ -28,9 +28,9 @@ export const register = async (req, res, next) => {
             data: {
                 email: User.email,
                 name: User.nome,
-                course: User.curso || 'teste',
+                course: User.course || 'teste',
                 password: passwd,
-                role: role
+                role: 'aluno'
             }
         })
 

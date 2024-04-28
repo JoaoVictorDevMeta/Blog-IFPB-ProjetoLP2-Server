@@ -6,7 +6,6 @@ import { sendMail } from '../utils/sendEmail.js';
 import { db } from "../lib/db.js";
 
 export const login = async(req, res, next) => {
-    console.log(req.body)
     let user = req.body
 
     try{
