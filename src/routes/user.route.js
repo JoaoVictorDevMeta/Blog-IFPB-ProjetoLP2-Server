@@ -3,6 +3,7 @@ import { db } from '../lib/db.js';
 import { validateRequest } from '../controller/validator/validation.js';
 
 import { userEditSchema } from '../controller/validator/userSchema.js';
+import { blogSchema } from '../controller/validator/blogSchema.js';
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.get('/', (req, res) => {
     res.send(req.user)
 })
 
-router.post('/edit/name', validateRequest(userEditSchema), async (req, res, next) => {
+router.put('/edit/name', validateRequest(userEditSchema), async (req, res, next) => {
     const {nome} = req.body;
    
     try{
@@ -29,7 +30,7 @@ router.post('/edit/name', validateRequest(userEditSchema), async (req, res, next
     }
 })
 
-router.post('/edit/description', validateRequest(userEditSchema), async (req, res, next) => {
+router.put('/edit/description', validateRequest(userEditSchema), async (req, res, next) => {
     const {description} = req.body;
    
     try{
@@ -48,7 +49,7 @@ router.post('/edit/description', validateRequest(userEditSchema), async (req, re
     }
 })
 
-router.post('/edit/course', validateRequest(userEditSchema), async (req, res, next) => {
+router.put('/edit/course', validateRequest(userEditSchema), async (req, res, next) => {
     const {course} = req.body;
    
     try{
@@ -66,5 +67,50 @@ router.post('/edit/course', validateRequest(userEditSchema), async (req, res, ne
         next(e)
     }
 })
+
+router.post('/newpost', validateRequest(blogSchema), async(req, res, next) => {
+    const { posts, title, subTitle } = req.body;
+    
+    try {
+        const blogData = {
+            title,
+            subTitle,
+            authorId: req.user.id,
+            content: {
+                create: posts.map((post, index) => ({
+                    title: post.title,
+                    content: post.content,
+                    offset: index
+                }))
+            }
+        };
+
+        const newBlog = await prisma.$transaction([
+            prisma.blog.create({
+                data: blogData,
+            })
+        ]);
+
+        res.json(newBlog);
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+});
+
+router.delete('/del/:id', async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const blog = await db.blog.delete({
+            where: {
+                id: parseInt(id)
+            }
+        });
+        res.json(blog);
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+});
 
 export default router;

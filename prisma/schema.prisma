@@ -36,7 +36,7 @@ model Notification{
   message String
   read Boolean @default(false)
   createdAt DateTime @default(now())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Token {
@@ -50,7 +50,7 @@ model Token {
 
 model Blog {
   id Int @id @default(autoincrement())
-  authorId Int @unique
+  authorId Int
   title String
   subTitle String 
   createdAt DateTime @default(now())
@@ -65,8 +65,8 @@ model like {
   id Int @id @default(autoincrement())
   userId Int 
   blogId Int
-  user User @relation(fields: [userId], references: [id])
-  blog Blog @relation(fields: [blogId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -79,8 +79,9 @@ model Blog_Content {
   id Int @id @default(autoincrement())
   blogId Int
   title String
+  offset Int
   imageUrl String?
   imageRef String?
   content String
-  blog Blog @relation(fields: [blogId], references: [id])
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }
