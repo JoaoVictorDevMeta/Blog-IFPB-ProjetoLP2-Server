@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { sendMail } from "../utils/sendEmail.js";
-import crypto from 'crypto'
+import crypto from 'crypto';
 
 import { db } from "../lib/db.js";
 

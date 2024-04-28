@@ -6,16 +6,19 @@ import { sendMail } from '../utils/sendEmail.js';
 import { db } from "../lib/db.js";
 
 export const login = async(req, res, next) => {
+    console.log(req.body)
     let user = req.body
-    const User = await db.user.findUnique({
-        where: {
-            email: user.email
-        }
-    })
-    if(!User){
-        return res.status(403).json('Usuário não encontrado')
-    }
+
     try{
+        const User = await db.user.findUnique({
+            where: {
+                email: user.email
+            }
+        })
+        if(!User){
+            return res.status(403).json('Usuário não encontrado')
+        }
+
         if (await bcrypt.compare(user.password, User.password)){ //validation
             const token = jwt.sign({id: User.id}, process.env.JWT_SECRET); // token creation
             

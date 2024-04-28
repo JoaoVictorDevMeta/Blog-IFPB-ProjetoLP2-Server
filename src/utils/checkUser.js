@@ -3,16 +3,16 @@ const prisma = new PrismaClient();
 
 export const checkUserAuth = (req, res, next) => {
     if (req.cookies.access_token) {
-        // User is already authenticated, redirect to home page
         res.status(403).json('Usuario ja está autenticado');
     } else {
-        // User is not authenticated, proceed to next middleware
         next();
     }
 }
 
-export const checkUserlogged = async (req, res) => {
-    const id = req.params.userId;
+export const checkUserlogged = async (req, res, next) => {
+    const id = Number(req.params.id);
+    if(!id) return res.status(403).json('Usuario Inválido'); 
+    //usuario NÃO PODE existir do Banco de Dados
 
     try{
         const user = await prisma.user.findUnique({
@@ -20,12 +20,15 @@ export const checkUserlogged = async (req, res) => {
                 id: Number(id)
             }
         })
-        if(!user){
-            return res.status(404).json('Usuario não encontrado')
-        }
-        return res.status(200).json('userLogged')
+        if(!user.id) return res.status(404).json('Usuario não encontrado')
+        //Usuario não existe no Banco de Dados
+        if(user.id !== req.userId) return res.status(401).json('Usuario não está autenticado')
+        //Usuario exigido não está autenticado corretamente
+
+        req.user = user
+        next() // envia o usuario para proxima rota
     } catch(e) {
         console.log(e)
-        return res.status(500).json('Erro no servidor')
+        next(e)
     }
 }

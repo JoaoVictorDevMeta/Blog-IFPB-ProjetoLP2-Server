@@ -16,12 +16,17 @@ app.use(cors({
     credentials: true
 }));
 
+//middlewares
+import { verifyToken } from "./src/middleware/tokenValidation.js";
+import { checkUserlogged } from "./src/utils/checkUser.js";
 //importação
 import userRoute from './src/routes/user.route.js';
 import authRoute from './src/routes/auth.route.js';
+import profileRoute from './src/routes/profile.route.js';
 //rotas
-app.use('/api/user', userRoute);
+app.use('/api/user/:id', verifyToken, checkUserlogged, userRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/profile', profileRoute);
 
 app.get("/", (req, res) => {
     res.send("Hello World");

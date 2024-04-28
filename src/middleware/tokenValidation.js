@@ -11,6 +11,7 @@ export const verifyToken = (req, res, next) =>{
             res.clearCookie("access_token")
             return res.status(403).json("Token não está valido"); 
         }
+        req.userId = user.id
         next();
     })
 }

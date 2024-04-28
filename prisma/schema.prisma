@@ -18,12 +18,15 @@ model User {
   verified Boolean @default(false)
   password String
   role String
-  createdAt DateTime @default(now())
   imageUrl String?
   BannerUrl String?
+
   blogs Blog[]
   notifications Notification[]
   token Token?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
 }
 
 model Notification{
