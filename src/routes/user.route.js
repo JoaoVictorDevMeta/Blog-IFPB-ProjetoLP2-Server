@@ -4,6 +4,7 @@ import { validateRequest } from '../controller/validator/validation.js';
 
 import { userEditSchema } from '../controller/validator/userSchema.js';
 import { blogSchema } from '../controller/validator/blogSchema.js';
+import { uploadImage, uploadImages } from '../utils/uploadImage.js';
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.put('/edit/name', validateRequest(userEditSchema), async (req, res, next)
         })
         res.send(newInfo)
     }catch (e){
-        console(e)
+        console.log(e)
         next(e)
     }
 })
@@ -44,7 +45,7 @@ router.put('/edit/description', validateRequest(userEditSchema), async (req, res
         })
         res.send(newInfo)
     }catch (e){
-        console(e)
+        console.log(e)
         next(e)
     }
 })
@@ -63,30 +64,69 @@ router.put('/edit/course', validateRequest(userEditSchema), async (req, res, nex
         })
         res.send(newInfo)
     }catch (e){
-        console(e)
+        console.log(e)
         next(e)
     }
 })
 
-router.post('/newpost', validateRequest(blogSchema), async(req, res, next) => {
-    const { posts, title, subTitle } = req.body;
+router.put('/edit/image', uploadImage, async (req, res, next) => {
+    try{
+        const newInfo = await db.user.update({
+            where:{
+                id: req.user.id
+            },
+            data:{
+                imageUrl: req.imageUrl
+            }
+        })
+        return res.send(newInfo)
+    }catch (e){
+        console.log(e)
+        next(e)
+    }
+});
+
+router.post('/newpost', uploadImages, validateRequest(blogSchema), async(req, res, next) => {
+    //dados do blog (parent)
+    const { title, subTitle, category } = req.body;
+    //tive que fazer pois formdata não aceita JSON, e não havia como colcoar um array para enviar
+    const posts = JSON.parse(req.body.posts); // passando para JSON o ocnteudo (child)
+    if (!posts || !posts.length) {
+        return res.status(400).json({ error: 'Post content is required' });
+    }
     
     try {
+        const existingCategory = await db.category.findFirst({
+            where: {
+                name: category
+            }
+        });
+
+        if (!existingCategory) {
+            return res.status(400).json({ error: 'Category does not exist' });
+        }
+
         const blogData = {
             title,
             subTitle,
             authorId: req.user.id,
+            categories: {
+                connect: {
+                    id: existingCategory.id
+                }
+            },
             content: {
                 create: posts.map((post, index) => ({
                     title: post.title,
                     content: post.content,
-                    offset: index
+                    offset: index, // parecido com a fragmentação
+                    imageUrl: req.imageUrls?.[index] || null // se não houver imagem, envia nulo (imagem é opcional)
                 }))
             }
         };
 
-        const newBlog = await prisma.$transaction([
-            prisma.blog.create({
+        const newBlog = await db.$transaction([
+            db.blog.create({
                 data: blogData,
             })
         ]);

@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer'
 
+// Função para enviar email
+// Transfere a mensagem especificada
 export const sendMail = async (email, subject, text) =>{
     try {
         const transport = nodemailer.createTransport({
