@@ -24,11 +24,13 @@ import userRoute from './src/routes/user.route.js';
 import authRoute from './src/routes/auth.route.js';
 import searchRoute from './src/routes/search.route.js';
 import profileRoute from './src/routes/profile.route.js';
+import blogRoute from './src/routes/blog.route.js';
 //rotas
 app.use('/api/user/:id', verifyToken, checkUserlogged, userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/profile', profileRoute);
 app.use('/api/search', searchRoute);
+app.use('/api/blog/', blogRoute);
 
 app.get("/", (req, res) => {
     res.send("Hello World");
