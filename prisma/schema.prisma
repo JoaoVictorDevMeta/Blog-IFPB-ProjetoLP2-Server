@@ -26,6 +26,8 @@ model User {
   likes like[]
   comments Comment[]
   token Token?
+  following Follow[] @relation("FollowerToFollow")
+  followers Follow[] @relation("FollowingToFollow")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,4 +117,13 @@ model BlogTag {
   tagId  Int
   blog   Blog @relation(fields: [blogId], references: [id])
   tag    Tag  @relation(fields: [tagId], references: [id])
+}
+
+model Follow {
+  id          Int  @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+  follower    User @relation("FollowerToFollow", fields: [followerId], references: [id])
+  following   User @relation("FollowingToFollow", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
 }
