@@ -25,8 +25,10 @@ import authRoute from './src/routes/auth.route.js';
 import searchRoute from './src/routes/search.route.js';
 import profileRoute from './src/routes/profile.route.js';
 import blogRoute from './src/routes/blog.route.js';
+import commentRoute from './src/routes/comment.route.js';
 //rotas
 app.use('/api/user/:id', verifyToken, checkUserlogged, userRoute);
+app.use('/api/comment/:id', verifyToken, checkUserlogged, commentRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/profile', profileRoute);
 app.use('/api/search', searchRoute);
