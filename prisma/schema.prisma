@@ -61,6 +61,7 @@ model Blog {
   content Blog_Content[]
   likes like[]
   comments Comment[]
+  tags BlogTag[]
 }
 
 model like {
@@ -100,4 +101,18 @@ model Comment {
   blog      Blog     @relation(fields: [blogId], references: [id])
   parent    Comment? @relation("CommentToComment", fields: [parentId], references: [id])
   replies   Comment[] @relation("CommentToComment")
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  blogs BlogTag[]
+}
+
+model BlogTag {
+  id     Int  @id @default(autoincrement())
+  blogId Int
+  tagId  Int
+  blog   Blog @relation(fields: [blogId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
 }
