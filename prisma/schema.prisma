@@ -126,4 +126,6 @@ model Follow {
   follower    User @relation("FollowerToFollow", fields: [followerId], references: [id])
   following   User @relation("FollowingToFollow", fields: [followingId], references: [id])
   createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
 }

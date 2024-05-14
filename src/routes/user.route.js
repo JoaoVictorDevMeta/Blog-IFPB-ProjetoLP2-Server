@@ -153,4 +153,70 @@ router.delete('/del/:id', async (req, res, next) => {
     }
 });
 
+router.post('/follow/:user_id', async (req, res, next) => {
+    const userId = parseInt(req.params.user_id);
+
+    if (req.user.id === userId) {
+        return res.status(400).json({ error: 'You cannot follow yourself' });
+    }
+
+    try {
+        const existingFollow = await db.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: req.user.id,
+                    followingId: userId
+                }
+            }
+        });
+
+        if (existingFollow) {
+            return res.status(400).json({ error: 'You are already following this user' });
+        }
+
+        const follow = await db.follow.create({
+            data: {
+                followerId: req.user.id,
+                followingId: userId
+            }
+        });
+        res.json(follow);
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+})
+
+router.delete('/unfollow/:user_id', async (req, res, next) => {
+    const userId = parseInt(req.params.user_id);
+
+    try {
+        const existingFollow = await db.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: req.user.id,
+                    followingId: userId
+                }
+            }
+        });
+
+        if (!existingFollow) {
+            return res.status(400).json({ error: 'You are not following this user' });
+        }
+
+        const follow = await db.follow.delete({
+            where: {
+                followerId_followingId: {
+                    followerId: req.user.id,
+                    followingId: userId
+                }
+            }
+        });
+        res.json(follow);
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+})
+
 export default router;
