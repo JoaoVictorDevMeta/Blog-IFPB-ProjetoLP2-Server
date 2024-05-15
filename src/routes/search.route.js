@@ -33,6 +33,9 @@ router.get('/', async (req, res, next) => {
             };
         }
 
+        const totalItems = await db.blog.count({ where: whereClause });
+        const totalPages = Math.ceil(totalItems / pageSize);
+
         const result = await db.blog.findMany({
             where: whereClause,
             orderBy: [
@@ -46,6 +49,7 @@ router.get('/', async (req, res, next) => {
 
         const response = {
             length: result.length,
+            totalPages: totalPages,
             data: result
         };
 
