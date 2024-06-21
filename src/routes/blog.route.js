@@ -23,6 +23,10 @@ router.get('/:id', async (req , res, next) => {
             },
         });
 
+        if(!blog){
+          return res.status(404).send('Blog not found')
+        }
+
         return res.send(blog)
     }catch(e){
         console.log(e)
