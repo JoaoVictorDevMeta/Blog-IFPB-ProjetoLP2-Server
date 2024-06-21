@@ -18,13 +18,13 @@ router.get('/', async (req, res, next) => {
         
         whereClause.OR = [
             {
-                title: { contains: search, }
+                title: { contains: search, mode: 'insensitive' },
             },
             {
-                subTitle: { contains: search, }
+                subTitle: { contains: search, mode: 'insensitive' },
             }
         ];
-
+        
         if (category) {
             whereClause.categories = {
                 some: {

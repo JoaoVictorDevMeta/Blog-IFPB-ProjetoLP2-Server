@@ -11,12 +11,21 @@ Se gostou, clique na ⭐
 
 Para utilizar o projeto siga os passos abaixo.
 
-## Configurações 
 
 ![Javascript](https://img.shields.io/badge/Javascript-F0DB4F?style=for-the-badge&labelColor=black&logo=javascript&logoColor=F0DB4F)
 ![Nodejs](https://img.shields.io/badge/Nodejs-3C873A?style=for-the-badge&labelColor=black&logo=node.js&logoColor=3C873A)
 ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-f5f5f5?style=for-the-badge&logo=prisma&logoColor=black)
+
+# Configuração Docker
+
+## Postgress SQL
+
+    $  docker compose exec db bash
+    $  psql -U root blog
+
+
+# Configuração pela Máquina
 
 ### Dependências de Desenvolvimento
 
@@ -79,12 +88,6 @@ Com o ambiente configurado basta utilizar o seguinte comandos em seu terminal, p
 caso tudo ocorra bem uma mesagem irá aparecer no console com o seguinte conteúdo:
 
     $ Server is running on port 3000
-
-# Configuração Docker
-
-## Postgress SQL
-
-    $  docker exec -it 7005e808650b psql -U root -d blog
 
 ## 📝 Licença
 
