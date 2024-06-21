@@ -89,6 +89,7 @@ router.put('/edit/image', uploadImage, async (req, res, next) => {
 router.post('/newpost', uploadImages, validateRequest(blogSchema), async(req, res, next) => {
     //dados do blog (parent)
     const { title, subTitle, category } = req.body;
+    const validCategories = ['Pesquisa', 'Projeto', 'Trabalho', 'Anuncio', 'Teste'];
     //tive que fazer pois formdata não aceita JSON, e não havia como colcoar um array para enviar
     const posts = JSON.parse(req.body.posts); // passando para JSON o ocnteudo (child)
     if (!posts || !posts.length) {
@@ -96,25 +97,15 @@ router.post('/newpost', uploadImages, validateRequest(blogSchema), async(req, re
     }
     
     try {
-        const existingCategory = await db.category.findFirst({
-            where: {
-                name: category
-            }
-        });
-
-        if (!existingCategory) {
-            return res.status(400).json({ error: 'Category does not exist' });
+        if (!validCategories.includes(category)) {
+            return res.status(400).json({ error: 'Invalid category' });
         }
 
         const blogData = {
             title,
             subTitle,
             authorId: req.user.id,
-            categories: {
-                connect: {
-                    id: existingCategory.id
-                }
-            },
+            category: category,
             content: {
                 create: posts.map((post, index) => ({
                     title: post.title,

@@ -80,6 +80,12 @@ caso tudo ocorra bem uma mesagem irá aparecer no console com o seguinte conteú
 
     $ Server is running on port 3000
 
+# Configuração Docker
+
+## Postgress SQL
+
+    $  docker exec -it 7005e808650b psql -U root -d blog
+
 ## 📝 Licença
 
 Esse projeto ainda não possui uma licença

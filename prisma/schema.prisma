@@ -5,8 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -51,6 +51,14 @@ model Token {
   user User @relation(fields: [userId], references: [id])
 }
 
+enum PostCategory {
+  Pesquisa
+  Projeto
+  Trabalho
+  Anuncio
+  Teste
+}
+
 model Blog {
   id Int @id @default(autoincrement())
   authorId Int
@@ -59,7 +67,7 @@ model Blog {
   createdAt DateTime @default(now())
   editedAt DateTime @updatedAt
   author User @relation(fields: [authorId], references: [id])
-  categories Category[]
+  category PostCategory
   content Blog_Content[]
   likes like[]
   comments Comment[]
@@ -72,12 +80,6 @@ model like {
   blogId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
-}
-
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String
-  blogs Blog[]
 }
 
 model Blog_Content {

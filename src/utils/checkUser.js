@@ -20,7 +20,7 @@ export const checkUserlogged = async (req, res, next) => {
                 id: Number(id)
             }
         })
-        if(!user.id) return res.status(404).json('Usuario não encontrado')
+        if(!user) return res.status(404).json('Usuario não encontrado')
         //Usuario não existe no Banco de Dados
         if(user.id !== req.userId) return res.status(401).json('Usuario não está autenticado')
         //Usuario exigido não está autenticado corretamente
