@@ -26,11 +26,7 @@ router.get('/', async (req, res, next) => {
         ];
         
         if (category) {
-            whereClause.categories = {
-                some: {
-                    name: { equals: category }
-                }
-            };
+            whereClause.category = category;
         }
 
         const totalItems = await db.blog.count({ where: whereClause });
@@ -43,6 +39,17 @@ router.get('/', async (req, res, next) => {
                     createdAt: 'desc'
                 }
             ],
+            include: {
+                author: true, 
+                content: {
+                    where: {
+                        imageUrl: {
+                            not: null
+                        }
+                    },
+                    take: 1,
+                }
+            },
             skip: (page - 1) * pageSize, // proximos itens
             take: pageSize, // itens por pagina
         });
