@@ -7,6 +7,50 @@ router.get('/', (req ,res) => {
     res.send('acessando blog')
 })
 
+router.get('/recent', async(req, res, next) => {
+  try{
+    const recentBlogs = await db.blog.findMany({
+      take: 7,
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        content: {
+          take: 1
+        }
+      }
+    });
+
+    res.send(recentBlogs)
+  } catch(e){
+    console.log(e)
+    next(e)
+  }
+})
+
+router.get('/trending', async(req, res, next) => {
+  try{
+    const trendingBlogs = await prisma.blog.findMany({
+      take: 7,
+      orderBy: {
+        likes: {
+          _count: 'desc'
+        }
+      },
+      include: {
+        content: {
+          take: 1
+        }
+      }
+    });
+
+    res.send(trendingBlogs)
+  } catch(e){
+    console.log(e)
+    next(e)
+  }
+})
+
 router.get('/:id', async (req , res, next) => {
     const id = Number(req.params.id);
     

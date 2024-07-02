@@ -1,6 +1,8 @@
 # Use the official Node.js 16 image as a parent image
 FROM node:20 as base
 
+RUN apt-get update && apt-get install -y postgresql-client
+
 # Set the working directory inside the container
 WORKDIR /app
 
