@@ -29,6 +29,7 @@ export const authRegisterSchema = joi.object({
 
     email: joi.string()
         .email({ minDomainSegments: 2 })
+        .pattern(/\.ifpb\.edu\.br$/)
         .required(),
 
     password: joi.string()
